@@ -11,18 +11,35 @@
     <svg width="960" height="500"></svg>
 
   </head>
+  <style>
+
+    body {
+      text-align: center;
+    }
+
+  </style>
   <body>
   <script>
 
 
 
   var url = 'https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/master/cyclist-data.json';
+  var times = [];
+  var years = [];
 
   d3.json(url)
     .then(function(data){
       //console.log(data[0].Time);
 
-      data.forEach(function(d){ d.Time = new Date(d.Time) });
+      for(var i = 0; i < data.length; i++) {
+        times.push(data[i].Time);
+      }
+      //console.log(times);
+
+      for(var i = 0; i < data.length; i++) {
+        years.push(data[i].Year);
+      }
+      //console.log(years);
 
       var svg = d3.select("svg"),
                 margin = {top: 20, right: 20, bottom: 30, left: 50},
@@ -35,20 +52,34 @@
                 .range([0, width])
 
       var y = d3.scaleLinear()
+                //.domain(d3.extent(parsedTime))
                 .range([height, 0]);
 
+      var specifier = "%M:%S";
+      var parsedTime = times.map(function(d) {
+        return d3.timeParse(specifier)(d)
+      })
+
+
       x.domain(d3.extent(data, function(d) { return d.Year; }));
-      y.domain(d3.extent(data, function(d) { return d.Time; }));
+      //y.domain(d3.extent(data, function(d) { return parsedTime; }));
 
-
+      // X Axis
       g.append("g")
         .attr("transform", "translate(0," + height + ")")
         .call(d3.axisBottom(x))
+        //.tickValues(years)
+        //.tickFormat(d3.time.format("%Y"));
 
 
+      // Y Axis
       g.append("g")
         .call(d3.axisLeft(y))
-      
+      /*  .tickValues(parsedTime)
+        .tickFormat(function(d, i) {
+           return times[i]
+        });
+      */
 
       svg.selectAll("circle")
           .data(data)
