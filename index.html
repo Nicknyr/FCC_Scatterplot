@@ -78,10 +78,13 @@
 
 
       // Y Axis
-      g.append("g")
-        .call(d3.axisLeft(y))
-        .attr("stroke-width", 2)
-        .style("font-size", ".6em")
+        g.append("g")
+         .call(d3.axisLeft(y)
+         .tickFormat(function(d,i) {
+           return times[i]
+        }))
+       .attr("stroke-width", 2)
+       .style("font-size", ".6em")
 
       svg.selectAll("circle")
         .data(data)
